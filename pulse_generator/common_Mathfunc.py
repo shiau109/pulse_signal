@@ -55,7 +55,7 @@ def rectPulseFunc (x, *p)->ndarray:
     #print(condition)
     return where(condition, p[0], 0)
 
-def GERP (x, *p)->ndarray:
+def GERPFunc (x, *p)->ndarray:
     """
     return Gaussian Edge Rectangular Pulse array
     x: array like, shape (n,) \n
@@ -66,22 +66,27 @@ def GERP (x, *p)->ndarray:
     p[4]: edge sigma \n
     """
     amp = p[0]
-    width = p[1]
-    edgeLength = p[3]
-    flat_start = p[2]
-    peakLength = edgeLength*2
-    flatLength = x -peakLength
-    peakSigma = peakLength
+    total_width = p[1]
+    start_pos = p[2]
+    edge_width = p[3]
+    peak_width = edge_width*2
+    edge_sigma = p[4]
 
-    startPos = edgeLength
-    endPos = startPos +flatLength
+    flat_start = start_pos +edge_width
+    flat_width = total_width -peak_width
 
-    startEdge = [ p[0], p[4], startPos ]
-    gaussUp = where( relativeTime<startPos, gaussianFunc(x, startEdge),0. )
-    endEdge = [ flatHieght, peakSigma, endPos ]
-    gaussDn = where( relativeTime>endPos, gaussianFunc(relativeTime, endEdge),0. )
-    step = where( (relativeTime>=startPos) & (relativeTime<=endPos), constFunc(relativeTime, [flatHieght]),0. )
-    return gaussUp +step +gaussDn
+    flat_end = flat_start +flat_width
+
+
+    raising_edge_pars = [ amp, edge_sigma, flat_start ]
+    gaussUp = where( x<flat_start, gaussianFunc(x, *raising_edge_pars), 0. )
+    falling_edge_pars = [ amp, edge_sigma, flat_end ]
+    gaussDn = where( x>flat_end, gaussianFunc(x, *falling_edge_pars),0. )
+
+    flat_pars = [ amp, flat_width, flat_start]
+    rect_pulse = rectPulseFunc( x, *flat_pars )
+    return gaussUp +rect_pulse +gaussDn
+
 def linearFunc (t, *p)->ndarray:
     """
     return constant array
@@ -107,7 +112,7 @@ if __name__ == '__main__':
     from numpy import linspace
     import matplotlib.pyplot as plt
 
-    x = linspace(0,9,100)
-    p = (1,3,0)
-    plt.plot(x,derivativeGaussianFunc(x,*p))
+    x = linspace(0,300,1000)
+    p = (1,200,0,30,30/2)
+    plt.plot(x,GERPFunc(x,*p))
     plt.show()

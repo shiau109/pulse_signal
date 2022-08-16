@@ -170,6 +170,31 @@ class Pulse():
         Signal_Q.Y = envelopeQ *cos( 2. *pi *IFFreq *time +phi_Q) -offsetQ
 
         return Signal_I, Signal_Q
+
+def convert_envtoIQ( envelope:ndarray, IFFreq:float, IQMixer:tuple=(1,90,0,0) ):
+    """
+    There is no carrier phase parameter 
+    """
+    ampBalance = IQMixer[0]
+    phaseBalance = IQMixer[1]
+    offsetI = IQMixer[2]
+    offsetQ = IQMixer[3]
+    time = array(range(len(envelope)))
+
+    LOShiftSign = sign(sin(radians(phaseBalance)))
+    
+    envelopeIQ = abs( envelope )
+    envelopeI = envelopeIQ /cos(radians(abs(phaseBalance)-90))
+    envelopeQ = envelopeI /ampBalance
+    phi_envelope = arctan2( envelope.imag, envelope.real )
+    phi_Q = phi_envelope -LOShiftSign*pi/2
+    phi_I = phi_Q -radians(phaseBalance) +pi
+    Signal_I = envelopeI *cos( 2. *pi *IFFreq *time +phi_I) -offsetI
+    Signal_Q = envelopeQ *cos( 2. *pi *IFFreq *time +phi_Q) -offsetQ
+
+    return Signal_I, Signal_Q
+
+
 def simulate_IQMixer ( I:Waveform, Q:Waveform, LOFreq:float, IQMixer:tuple=(1,90,0,0)):
     time = I.get_xAxis()
     Signal_RF = Waveform(I.x0,I.dx,empty(time.shape[-1]))
@@ -202,10 +227,11 @@ def get_Pulse_gauss ( duration:float, parameters:tuple, carrierFrequency:float=0
 
 def get_Pulse_DRAG ( duration:float, parameters:tuple, carrierFrequency:float=0, carrierPhase:float=0  ):
     """ 
-    Get a Pulse Object
-    p0: Amplitude 
-    p1: sigma
-    p2: Peak Position
+    Get a Pulse Object \n
+    p0: Amplitude \n
+    p1: sigma \n
+    p2: Peak Position \n
+    p3: derivative Gaussian amplitude ratio \n
     """
     newPulse = Pulse()
     newPulse.carrierFrequency = carrierFrequency
