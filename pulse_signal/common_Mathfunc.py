@@ -2,9 +2,9 @@
 # Typing
 from numpy import ndarray
 # Numpy array
-from numpy import array, append, zeros, ones, where, linspace, arange, searchsorted
+from numpy import array, append, zeros, ones, where, linspace
 # Numpy common math function
-from numpy import exp, sqrt, arctan2, cos, sin, angle, radians, sign, log, ceil
+from numpy import exp
 # Numpy constant
 from numpy import pi, logical_and
 
@@ -52,7 +52,7 @@ def rectPulseFunc (x, *p)->ndarray:
     p[2]: start \n
     """
     condition = logical_and(abs(x)>=p[2], abs(x)<=(p[1]+p[2]))
-    #print(condition)
+
     return where(condition, p[0], 0)
 
 def GERPFunc (x, *p)->ndarray:
@@ -111,6 +111,7 @@ def DRAGFunc ( t, *p )->ndarray:
 if __name__ == '__main__':
     from numpy import linspace
     import matplotlib.pyplot as plt
+    
 
     x = linspace(0,300,1000)
     p = (1,200,0,30,30/2)

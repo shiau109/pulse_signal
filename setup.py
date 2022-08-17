@@ -4,8 +4,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="pulse_generator",
-    version="0.0.1",
+    name="pulse_signal",
+    version="0.0.2",
     author="Hsiao, li-chieh",
     author_email="shiau109@gmail.com",
     description="A small example package",
@@ -21,6 +21,6 @@ setuptools.setup(
     #     "Operating System :: OS Independent",
     # ],
     # package_dir={"": "src"},
-    packages=setuptools.find_packages(where="pulse_generator"),
+    packages=setuptools.find_packages(where="pulse_signal"),
     python_requires=">=3.6",
 )
