@@ -7,13 +7,13 @@ from numpy import array, empty
 from numpy import arctan2, cos, sin, angle, radians, sign
 # const
 from numpy import pi
-
+from typing import Tuple
 from .waveform import Waveform
 
 
 
 
-def upConversion_IQ( envelope_RF:ndarray, IFFreq:float, IQMixer:tuple=(1,90,0,0) )->ndarray:
+def upConversion_IQ( envelope_RF:ndarray, IFFreq:float, IQMixer:Tuple=(1,90,0,0) )->Tuple[ndarray,ndarray]:
     """
     IFFreq unit is 1/dt of envelope_RF
     """

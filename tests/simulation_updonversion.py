@@ -1,7 +1,3 @@
-import sys
-#sys.path.append(r"E:\Jacky\Github\ASQPU\src")
-sys.path.append(r"E:\Jacky\Github\pulse_signal")
-print(sys.path)
 
 import matplotlib.pyplot as plt
 from pulse_signal.pulse import Pulse
@@ -20,7 +16,7 @@ testPulse.duration = pulse_duration
 testPulse.carrierFrequency = freq_RF
 testPulse.carrierPhase = 0
 testPulse.envelopeFunc = gaussianFunc
-testPulse.parameters = (1,1, (pulse_duration+t0)/2 )
+testPulse.parameters = (1,pulse_duration/4, (pulse_duration+t0)/2 )
 
 WF_envelope = testPulse.generate_envelope( t0, 1 )
 time_env = WF_envelope.get_xAxis()

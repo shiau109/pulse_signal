@@ -1,18 +1,19 @@
 import unittest
-import sys
-#sys.path.append(r"E:\Jacky\Github\ASQPU\src")
-sys.path.append(r"E:\Jacky\Github\pulse_generator")
-print(sys.path)
-from qpu.backend.circuit.api import to_deviceManager
+
+from numpy import array
+from pulse_signal.waveform import Waveform
 
 
-fo = open("./tests/specification_deviceOnly.txt", "r")
-spec = fo.read()
-fo.close()
 
 class Test_to_deviceManager(unittest.TestCase):
 
 	def test_to_deviceManager(self):
-		self.assertEqual(to_deviceManager(spec,["DAC","SG"]), {'DAC': ['SDAWG_1', 'SDAWG_2', 'SDAWG_3'], 'SG': ['DDSLO_1']})
+		x0 = 1
+		dx = 0.5
+		ydata = array([0,2,3])
+		test_WF = Waveform(x0,dx,array([0,2,3]))
+		self.assertEqual(test_WF.x0, x0)
+		self.assertEqual(test_WF.dx, dx)
+		self.assertEqual(test_WF.Y[0], ydata[0])
 
 unittest.main()

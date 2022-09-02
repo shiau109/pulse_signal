@@ -20,7 +20,7 @@ setuptools.setup(
     #     "License :: OSI Approved :: MIT License",
     #     "Operating System :: OS Independent",
     # ],
-    # package_dir={"": "src"},
-    packages=setuptools.find_packages(where="pulse_signal"),
-    python_requires=">=3.6",
+    package_dir={"pulse_signal": "pulse_signal"},
+    packages=[],
+    python_requires=">=3.10",
 )
