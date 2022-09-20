@@ -15,6 +15,50 @@ from .common_Mathfunc import gaussianFunc, DRAGFunc
 from .waveform import Waveform
 from .digital_mixer import upConversion_IQ
 
+class QAM():
+    """
+    Quadrature amplitude modulation (QAM)
+
+    """
+    def __init__ ( self ):
+        self.carrierFrequency = None
+        self.envelope = array([[None],[None]])
+
+
+
+    @property
+    def inphase ( self )->ndarray:
+        """ In-phase component I(t)."""
+        return self.envelope[0]
+    @inphase.setter
+    def inphase ( self, value:ndarray ):
+        self.envelope[0] = value
+
+    @property
+    def quadrature ( self )->ndarray:
+        """ Quadrature component Q(t)."""
+        return self.envelope[1]
+    @quadrature.setter
+    def duration ( self, value:ndarray ):
+        self.envelope[1] = value
+
+
+    def SSB( self, freqIF:float, IQMixer:tuple=(1,90,0,0) )->Tuple[ndarray,ndarray,float]:
+        """
+        For the pulse is generate by IQMixer
+        For a given dt and t0, calculate the I/Q for IQmixer. \n
+
+        IFFreq: The Intermediate frequency of I/Q ( Unit in dt ) \n
+        IQMixer: The parametrs for calibrate IQmixer\n
+            p1: I/Q Amplitude Balance ( dimensionless ratio )\n
+            p2: Phase Balance ( unit in angle )\n
+            p3: I offset\n
+            p4: Q offset\n
+        The LO frequency should be RF-IF (RF is carrier frequency)
+        """
+        signal_I, signal_Q = upConversion_IQ( self.envelope, freqIF, IQMixer)
+        freq_LO = self.carrierFrequency - freqIF
+        return signal_I, signal_Q, freq_LO
 
 
 class Pulse():

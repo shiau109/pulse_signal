@@ -18,7 +18,6 @@ def gaussianFunc (x, *p)->ndarray:
         p[1]: sigma\n
         p[2]: peak position\n
     """
-
     return p[0] *exp( -( (x-p[2]) /p[1] )**2 /2)
 def derivativeGaussianFunc (x, *p)->ndarray:
     """
