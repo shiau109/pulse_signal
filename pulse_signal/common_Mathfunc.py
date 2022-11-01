@@ -97,7 +97,7 @@ def linearFunc (t, *p)->ndarray:
 
 def DRAGFunc ( t, *p )->ndarray:
     """
-    return gaussian +1j*derivative Gaussian\n
+    return gaussian -1j*derivative Gaussian\n
     x: array like, shape (n,), the element is complex number \n
     p[0]: amp \n
     p[1]: sigma \n
