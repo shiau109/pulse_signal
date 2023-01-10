@@ -45,7 +45,6 @@ def ErfGaussianFunc(x, *p)->ndarray:
     p: parameters\n
         p[0]: amp\n
         p[1]: sigma\n
-        p[2]: peak position\n
     advantage: start & end is always at zero!
     """
     tg = x[-1]-x[0] # gate time or pulse length
@@ -73,36 +72,30 @@ def HermiteFunc(x, *p)->ndarray:
     """
     x: array like, shape (n,)\n
     p: parameters\n
-        p[0]: amp\n
-        p[1]: sigma\n
-        p[2]: peak position\n
+        p[0]: A (1.67 recommended)\n
+        p[1]: alpha (4 recommended)\n
+        p[2]: beta (4 recommended)\n
     """
     tg = x[-1]-x[0]
     # given in the reference
-    A = 1.67
-    alpha = 4
-    beta = 4
-    sigma = tg/(2*alpha)
+    sigma = tg/(2*p[1])
 
-    return ((1-beta*((x-p[2])/(alpha*sigma))**2)*A*exp(-(x-p[2])**2/(2*sigma**2)))/sigma
+    return ((1-p[2]*((x-tg/2)/(p[1]*sigma))**2)*p[0]*exp(-(x-tg/2)**2/(2*sigma**2)))/sigma
 
 def derivativeHermiteFunc (x, *p)->ndarray:
     """
     return derivative Hermite
     x: array like, shape (n,) \n
     p: parameters \n
-        p[0]: amp \n
-        p[1]: sigma \n
-        p[2]: peak position \n 
+        p[0]: A (1.67 recommended)\n
+        p[1]: alpha (4 recommended)\n
+        p[2]: beta (4 recommended)\n 
     """
     tg = x[-1]-x[0]
     # given in the reference
-    A = 1.67
-    alpha = 4
-    beta = 4
-    sigma = tg/(2*alpha)
+    sigma = tg/(2*p[1])
     if tg != 0. :
-        return -(A*(x-p[2])*(2*beta/alpha**2+(1-beta*((x-p[2])/(alpha*sigma))**2))*exp(-((x-p[2])**2)/(2*sigma**2)))/sigma**3
+        return -(p[0]*(x-tg/2)*(2*p[2]/p[1]**2+(1-p[2]*((x-tg/2)/(p[1]*sigma))**2))*exp(-((x-tg/2)**2)/(2*sigma**2)))/sigma**3
     else :
         return zeros(len(x))
 
@@ -188,20 +181,19 @@ def DRAGFunc_ErfG(t, *p )->ndarray:
     x: array like, shape (n,), the element is complex number \n
     p[0]: amp \n
     p[1]: sigma \n
-    p[2]: peak position \n
-    p[3]: derivative ErfGaussian amplitude ratio \n
+    p[2]: derivative ErfGaussian amplitude ratio \n
     """
-    ErfGaussParas = (p[0],p[1],p[2])
-    return ErfGaussianFunc( t, *ErfGaussParas ) -1j*p[3]*derivativeErfGaussianFunc( t, *ErfGaussParas )
+    ErfGaussParas = (p[0],p[1])
+    return ErfGaussianFunc( t, *ErfGaussParas ) -1j*p[2]*derivativeErfGaussianFunc( t, *ErfGaussParas )
 
-# 1223 append DRAG with Hermite waveform
+# 1223 append DRAG with Hermite wavefor2
 def DRAGFunc_Hermite(t, *p )->ndarray:
     """
     return Hermite +1j*derivative Hermite\n
     x: array like, shape (n,), the element is complex number \n
-    p[0]: amp \n
-    p[1]: sigma \n
-    p[2]: peak position \n
+    p[0]: A (1.67 recommended)\n
+    p[1]: alpha (4 recommended)\n
+    p[2]: beta (4 recommended)\n 
     p[3]: derivative Hermite amplitude ratio \n
     """
     HermiteParas = (p[0],p[1],p[2])
