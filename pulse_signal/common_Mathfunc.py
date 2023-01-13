@@ -190,7 +190,7 @@ def DRAGFunc_Hermite(t, *p )->ndarray:
     p[1]: alpha (4 recommended)\n
     p[2]: beta (4 recommended)\n 
     p[3]: peak position\n
-    p[3]: derivative Hermite amplitude ratio \n
+    p[4]: derivative Hermite amplitude ratio \n
     """
     HermiteParas = (p[0],p[1],p[2],p[3])
     return HermiteFunc( t, *HermiteParas ) -1j*p[4]*derivativeHermiteFunc( t, *HermiteParas )
