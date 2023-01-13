@@ -30,7 +30,7 @@ def give_waveformInfo(beat,width,height)->dict:
             if isnan(paraList[0]): sfactor = 4
             else: sfactor = paraList[0]
             carrierPhase = 0
-            func_paras = [height, width/sfactor, width/2,0]
+            func_paras = [height, width/sfactor, width/2, 0]
 
         case "gaussup":
             pulse_func = cpf.GaussianFamily
@@ -44,7 +44,7 @@ def give_waveformInfo(beat,width,height)->dict:
             if isnan(paraList[0]): sfactor = 4
             else: sfactor = paraList[0]
             carrierPhase = 0
-            func_paras = [height, width*2/sfactor, width,0]
+            func_paras = [height, width*2/sfactor, width, 0]
 
 
         case "drage":   # waveform with ErfGaussian
@@ -64,8 +64,8 @@ def give_waveformInfo(beat,width,height)->dict:
             carrierPhase = pi *(rotAxis/180.)
             shift = cpf.ErfShifter(width,width/sfactor)
             
-            func_paras = [height, width/sfactor,width/2,shift*height,dRatio ]
-            print(func_paras)
+            func_paras = [height, width/sfactor, width/2, shift*height, dRatio ]
+        
         case "dragh":   # waveform with hermite
             pulse_func = cpf.DRAGFunc_Hermite
             if len(paraList)==1:
@@ -73,6 +73,7 @@ def give_waveformInfo(beat,width,height)->dict:
                 alpha = 4
                 beta = 4
                 dRatio = 0.5
+
                 rotAxis = 0
             else:
                 if isnan(paraList[0]): A = 1.67
@@ -87,7 +88,7 @@ def give_waveformInfo(beat,width,height)->dict:
                 else: rotAxis = radians(paraList[4])
 
             carrierPhase = pi *(rotAxis/180.)
-            func_paras = [height, alpha, beta, dRatio ]
+            func_paras = [height, alpha, beta, width/2, dRatio ]
 
         case "drag":
             pulse_func = cpf.DRAGFunc
@@ -103,7 +104,7 @@ def give_waveformInfo(beat,width,height)->dict:
                 if isnan(paraList[2]): rotAxis = 0
                 else: rotAxis = radians(paraList[2])
             carrierPhase = pi *(rotAxis/180.)
-            func_paras = [height, width/sfactor, width/2, 0,dRatio ]
+            func_paras = [height, width/sfactor, width/2, 0, dRatio ]
 
         case "lin":
             pulse_func = cpf.linearFunc

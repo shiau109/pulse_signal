@@ -79,12 +79,13 @@ def HermiteFunc(x, *p)->ndarray:
         p[0]: A (1.67 recommended)\n
         p[1]: alpha (4 recommended)\n
         p[2]: beta (4 recommended)\n
+        p[3]: peak position (half gate time recommended)
     """
     tg = x[-1]-x[0]
     # given in the reference
     sigma = tg/(2*p[1])
 
-    return ((1-p[2]*((x-tg/2)/(p[1]*sigma))**2)*p[0]*exp(-(x-tg/2)**2/(2*sigma**2)))/sigma
+    return ((1-p[2]*((x-p[3])/(p[1]*sigma))**2)*p[0]*exp(-(x-p[3])**2/(2*sigma**2)))/sigma
 
 def derivativeHermiteFunc (x, *p)->ndarray:
     """
@@ -94,12 +95,13 @@ def derivativeHermiteFunc (x, *p)->ndarray:
         p[0]: A (1.67 recommended)\n
         p[1]: alpha (4 recommended)\n
         p[2]: beta (4 recommended)\n 
+        p[3]: peak position (half gate time recommended)
     """
     tg = x[-1]-x[0]
     # given in the reference
     sigma = tg/(2*p[1])
     if tg != 0. :
-        return -(p[0]*(x-tg/2)*(2*p[2]/p[1]**2+(1-p[2]*((x-tg/2)/(p[1]*sigma))**2))*exp(-((x-tg/2)**2)/(2*sigma**2)))/sigma**3
+        return -(p[0]*(x-p[3])*(2*p[2]/p[1]**2+(1-p[2]*((x-p[3])/(p[1]*sigma))**2))*exp(-((x-p[3])**2)/(2*sigma**2)))/sigma**3
     else :
         return zeros(len(x))
 
@@ -187,10 +189,11 @@ def DRAGFunc_Hermite(t, *p )->ndarray:
     p[0]: A (1.67 recommended)\n
     p[1]: alpha (4 recommended)\n
     p[2]: beta (4 recommended)\n 
+    p[3]: peak position\n
     p[3]: derivative Hermite amplitude ratio \n
     """
-    HermiteParas = (p[0],p[1],p[2])
-    return HermiteFunc( t, *HermiteParas ) -1j*p[3]*derivativeHermiteFunc( t, *HermiteParas )
+    HermiteParas = (p[0],p[1],p[2],p[3])
+    return HermiteFunc( t, *HermiteParas ) -1j*p[4]*derivativeHermiteFunc( t, *HermiteParas )
 
 
 if __name__ == '__main__':
