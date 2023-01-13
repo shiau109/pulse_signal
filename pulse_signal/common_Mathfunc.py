@@ -11,6 +11,37 @@ from numpy import pi, logical_and
 from scipy.special import erf
 
 
+# Gaussian Family
+def GaussianFamily (x, *p)->ndarray:
+    """
+    x: array like, shape (n,)\n
+    p: parameters\n
+        p[0]: amp\n
+        p[1]: sigma\n
+        p[2]: peak position\n
+        p[3]: shift term 
+    """
+    return p[0] *exp( -( (x-p[2]) /p[1] )**2 /2) + p[3]
+
+def derivativeGaussianFamily (x, *p)->ndarray:
+    """
+    x: array like, shape (n,)\n
+    p: parameters\n
+        p[0]: amp\n
+        p[1]: sigma\n
+        p[2]: peak position\n
+    """ 
+    if p[1] != 0. :
+        return -p[0] / p[1]**2 *(x-p[2]) *exp( -( (x-p[2]) /p[1] )**2 /2)
+    else :
+        return zeros(len(x))
+
+
+def ErfShifter(gatetime,sigma)->float:
+    
+    return -exp(-(gatetime**2)/(8*sigma**2))
+
+
 
 def gaussianFunc (x, *p)->ndarray:
     """
@@ -37,33 +68,6 @@ def derivativeGaussianFunc (x, *p)->ndarray:
     else :
         return zeros(len(x))
 
-# 12/23: Ratis append gaussian with erf, start & end at zero is advantage
-# ref: PHYSICAL REVIEW A 83, 012308 (2011)  
-def ErfGaussianFunc(x, *p)->ndarray:
-    """
-    x: array like, shape (n,)\n
-    p: parameters\n
-        p[0]: amp\n
-        p[1]: sigma\n
-    advantage: start & end is always at zero!
-    """
-    tg = x[-1]-x[0] # gate time or pulse length
-    return p[0]*(exp(-((x-tg/2)**2)/(2*p[1]**2))-exp(-(tg**2)/(8*p[1]**2)))/(sqrt(2*pi*p[1]**2)*erf(tg/(sqrt(8)*p[1]))-tg*exp(-(tg**2)/(8*p[1]**2)))
-
-def derivativeErfGaussianFunc (x, *p)->ndarray:
-    """
-    return derivative ErfGaussian
-    x: array like, shape (n,) \n
-    p: parameters \n
-        p[0]: amp \n
-        p[1]: sigma \n
-        p[2]: peak position \n 
-    """
-    tg = x[-1]-x[0] # gate time or pulse length
-    if p[1] != 0. :
-        return -(p[0]*(x-tg/2)*exp(-(x-tg/2)**2/(2*p[1]**2)))/((sqrt(2*pi*p[1]**2)*erf(tg/(sqrt(8)*p[1]))-tg*exp(-(tg**2)/(8*p[1]**2)))*p[1]**2)
-    else :
-        return zeros(len(x))
 
 # 1223 append Hermite waveform
 # ref: PHYSICAL REVIEW B 68, 224518 (2003)
@@ -168,23 +172,12 @@ def DRAGFunc ( t, *p )->ndarray:
     p[0]: amp \n
     p[1]: sigma \n
     p[2]: peak position \n
-    p[3]: derivative Gaussian amplitude ratio \n
+    p[3]: shift term\n
+    p[4]: derivative Gaussian amplitude ratio \n
     """
-    gaussParas = (p[0],p[1],p[2])
-    return gaussianFunc( t, *gaussParas ) -1j*p[3]*derivativeGaussianFunc( t, *gaussParas )
+    gaussParas = (p[0],p[1],p[2],p[3])
+    return GaussianFamily( t, *gaussParas ) -1j*p[4]*derivativeGaussianFamily( t, *gaussParas )
 
-
-# 1223 append DRAG with ErfGaussian Function
-def DRAGFunc_ErfG(t, *p )->ndarray:
-    """
-    return ErfGaussian +1j*derivative ErfGaussian\n
-    x: array like, shape (n,), the element is complex number \n
-    p[0]: amp \n
-    p[1]: sigma \n
-    p[2]: derivative ErfGaussian amplitude ratio \n
-    """
-    ErfGaussParas = (p[0],p[1])
-    return ErfGaussianFunc( t, *ErfGaussParas ) -1j*p[2]*derivativeErfGaussianFunc( t, *ErfGaussParas )
 
 # 1223 append DRAG with Hermite wavefor2
 def DRAGFunc_Hermite(t, *p )->ndarray:
